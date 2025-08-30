@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好孩子数学练习*卢瑞瑞制作</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', '楷体', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4b86b4;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 24px;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-radius: 10px;
+        }
+        input {
+            font-size: 20px;
+            width: 60px;
+            text-align: center;
+            padding: 5px;
+            border: 2px solid #4b86b4;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4b86b4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #63ace5;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>好孩子数学练习*卢瑞瑞制作</h1>
+        <div id="quiz">
+            <!-- 题目将在这里动态生成 -->
+        </div>
+        <button onclick="checkAnswers()">提交答案</button>
+        <button onclick="resetQuiz()">重新开始</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 生成随机数学题目
+        function generateQuestions() {
+            const questions = [];
+            for (let i = 0; i < 5; i++) {
+                // 随机选择加法或减法
+                const isAddition = Math.random() > 0.5;
+                let num1, num2, answer;
+                
+                if (isAddition) {
+                    // 加法：确保结果不超过10
+                    num1 = Math.floor(Math.random() * 5) + 1;
+                    num2 = Math.floor(Math.random() * (10 - num1)) + 1;
+                    answer = num1 + num2;
+                    questions.push({
+                        text: `${num1} + ${num2} = `,
+                        answer: answer
+                    });
+                } else {
+                    // 减法：确保结果不为负数
+                    num1 = Math.floor(Math.random() * 10) + 1;
+                    num2 = Math.floor(Math.random() * num1) + 1;
+                    answer = num1 - num2;
+                    questions.push({
+                        text: `${num1} - ${num2} = `,
+                        answer: answer
+                    });
+                }
+            }
+            return questions;
+        }
+
+        // 显示题目
+        function displayQuestions() {
+            const quizDiv = document.getElementById('quiz');
+            quizDiv.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <span>第${index + 1}题: ${question.text}</span>
+                    <input type="number" id="answer${index}" min="0" max="10">
+                `;
+                quizDiv.appendChild(questionDiv);
+            });
+        }
+
+        // 检查答案
+        function checkAnswers() {
+            let correctCount = 0;
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<h2>答案检查</h2>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = parseInt(document.getElementById(`answer${index}`).value) || 0;
+                const isCorrect = userAnswer === question.answer;
+                
+                if (isCorrect) {
+                    correctCount++;
+                }
+                
+                const answerResult = document.createElement('div');
+                answerResult.className = isCorrect ? 'correct' : 'incorrect';
+                answerResult.innerHTML = `第${index + 1}题: ${question.text} ${question.answer} 
+                ${isCorrect ? '✓ 正确！' : '✗ 正确答案: ' + question.answer}`;
+                
+                resultDiv.appendChild(answerResult);
+            });
+            
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `你的得分: ${correctCount} / 5`;
+            resultDiv.appendChild(scoreDiv);
+            
+            // 添加鼓励语
+            const encouragement = document.createElement('p');
+            if (correctCount === 5) {
+                encouragement.innerHTML = '太棒了！全对！小侄女是数学小天才！姑姑给你买冰激凌🌟';
+            } else if (correctCount >= 3) {
+                encouragement.innerHTML = '小侄女做得很好！继续加油！👍';
+            } else {
+                encouragement.innerHTML = '再练习一下，下次会更好！💪';
+            }
+            resultDiv.appendChild(encouragement);
+        }
+
+        // 重置测验
+        function resetQuiz() {
+            questions = generateQuestions();
+            displayQuestions();
+            document.getElementById('result').style.display = 'none';
+        }
+
+        // 初始化
+        let questions = generateQuestions();
+        window.onload = displayQuestions;
+    </script>
+</body>
+</html>
